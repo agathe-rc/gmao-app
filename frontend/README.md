@@ -1,186 +1,223 @@
-# `angular-seed` — the seed for AngularJS apps
-
-This project is an application skeleton for a typical [AngularJS][angularjs] web app. You can use it
-to quickly bootstrap your angular webapp projects and dev environment for these projects.
-
-The seed contains a sample AngularJS application and is preconfigured to install the AngularJS
-framework and a bunch of development and testing tools for instant web development gratification.
-
-The seed app doesn't do much, just shows how to wire two controllers and views together.
+# AngularJS Phone Catalog Tutorial Application
 
 
-## Getting Started
+## Overview
 
-To get you started you can simply clone the `angular-seed` repository and install the dependencies:
+This application takes the developer through the process of building a web-application using
+AngularJS. The application is loosely based on the **Google Phone Gallery**, which no longer exists.
+Here is a historical reference: [Google Phone Gallery on WayBack][google-phone-gallery]
 
-### Prerequisites
+Each tagged commit is a separate lesson teaching a single aspect of the framework.
 
-You need git to clone the `angular-seed` repository. You can get git from [here][git].
+The full tutorial can be found at https://docs.angularjs.org/tutorial.
 
-We also use a number of Node.js tools to initialize and test `angular-seed`. You must have Node.js
-and its package manager (npm) installed. You can get them from [here][node].
 
-### Clone `angular-seed`
+## Prerequisites
 
-Clone the `angular-seed` repository using git:
+### Git
+
+- A good place to learn about setting up git is [here][git-setup].
+- You can find documentation and download git [here][git-home].
+
+### Node.js and Tools
+
+- Get [Node.js][node].
+- Install the tool dependencies: `npm install`
+
+
+## Workings of the Application
+
+- The application filesystem layout structure is based on the [angular-seed][angular-seed] project.
+- There is no dynamic backend (no application server) for this application. Instead we fake the
+  application server by fetching static JSON files.
+- Read the _Development_ section at the end to familiarize yourself with running and developing
+  an AngularJS application.
+
+
+## Commits / Tutorial Outline
+
+You can check out any point of the tutorial using:
 
 ```
-git clone https://github.com/angular/angular-seed.git
-cd angular-seed
+git checkout step-?
 ```
 
-If you just want to start a new project without the `angular-seed` commit history then you can do:
+To see the changes made between any two lessons use the `git diff` command:
 
 ```
-git clone --depth=1 https://github.com/angular/angular-seed.git <your-project-name>
+git diff step-?..step-?
 ```
 
-The `depth=1` tells git to only pull down one commit worth of historical data.
+### step-0 _Bootstrapping_
 
-### Install Dependencies
+- Add the 'angular.js' script.
+- Add the `ngApp` directive to bootstrap the application.
+- Add a simple template with an expression.
 
-We have two kinds of dependencies in this project: tools and AngularJS framework code. The tools
-help us manage and test the application.
+### step-1 _Static Template_
 
-* We get the tools we depend upon and the AngularJS code via `npm`, the [Node package manager][npm].
-* In order to run the end-to-end tests, you will also need to have the
-  [Java Development Kit (JDK)][jdk] installed on your machine. Check out the section on
-  [end-to-end testing](#e2e-testing) for more info.
+- Add a stylesheet file ('app/app.css').
+- Add a static list with two phones.
 
-We have preconfigured `npm` to automatically copy the downloaded AngularJS files to `app/lib` so we
-can simply do:
+### step-2 _AngularJS Templates_
+
+- Convert the static phone list to dynamic by:
+  - Creating a `PhoneListController` controller.
+  - Extracting the data from HTML into the controller as an in-memory dataset.
+  - Converting the static document into a template with the use of the `ngRepeat` directive.
+- Add a simple unit test for the `PhoneListController` controller to show how to write tests and
+  run them using Karma.
+
+### step-3 _Components_
+
+- Introduce components.
+- Combine the controller and the template into a reusable, isolated `phoneList` component.
+- Refactor the application and tests to use the `phoneList` component.
+
+### step-4 _Directory and File Organization_
+
+- Refactor the layout of files and directories, applying best practices and techniques that will
+  make the application easier to maintain and expand in the future:
+  - Put each entity in its own file.
+  - Organize code by feature area (instead of by function).
+  - Split code into modules that other modules can depend on.
+  - Use external templates in `.html` files (instead of inline HTML strings).
+
+### step-5 _Filtering Repeaters_
+
+- Add a search box to demonstrate:
+  - How the data-binding works on input fields.
+  - How to use the `filter` filter.
+  - How `ngRepeat` automatically shrinks and grows the number of phones in the view.
+- Add an end-to-end test to:
+  - Show how end-to-end tests are written and used.
+  - Prove that the search box and the repeater are correctly wired together.
+
+### step-6 _Two-way Data Binding_
+
+- Add an `age` property to the phone model.
+- Add a drop-down menu to control the phone list order.
+- Override the default order value in controller.
+- Add unit and end-to-end tests for this feature.
+
+### step-7 _XHR & Dependency Injection_
+
+- Replace the in-memory dataset with data loaded from the server (in the form of a static
+  'phone.json' file to keep the tutorial backend agnostic):
+  - The JSON data is loaded using the `$http` service.
+- Demonstrate the use of `services` and `dependency injection` (DI):
+  - `$http` is injected into the controller through DI.
+  - Introduce DI annotation methods: `.$inject` and inline array
+
+### step-8 _Templating Links & Images_
+
+- Add a phone image and links to phone pages.
+- Add an end-to-end test that verifies the phone links.
+- Tweak the CSS to style the page just a notch.
+
+### step-9 _Routing & Multiple Views_
+
+- Introduce the `$route` service, which allows binding URLs to views for routing and deep-linking:
+  - Add the `ngRoute` module as a dependency.
+  - Configure routes for the application.
+  - Use the `ngView` directive in 'index.html'.
+- Create a phone list route (`/phones`):
+  - Map `/phones` to the existing `phoneList` component.
+- Create a phone detail route (`/phones/:phoneId`):
+  - Map `/phones/:phoneId` to a new `phoneDetail` component.
+  - Create a dummy `phoneDetail` component, which displays the selected phone ID.
+  - Pass the `phoneId` parameter to the component's controller via `$routeParams`.
+
+### step-10 _More Templating_
+
+- Implement fetching data for the selected phone and rendering to the view:
+  - Use `$http` in `PhoneDetailController` to fetch the phone details from a JSON file.
+  - Create the template for the detail view.
+- Add CSS styles to make the phone detail page look "pretty-ish".
+
+### step-11 _Custom Filters_
+
+- Implement a custom `checkmark` filter.
+- Update the `phoneDetail` template to use the `checkmark` filter.
+- Add a unit test for the `checkmark` filter.
+
+### step-12 _Event Handlers_
+
+- Make the thumbnail images in the phone detail view clickable:
+  - Introduce a `mainImageUrl` property on `PhoneDetailController`.
+  - Implement the `setImage()` method for changing the main image.
+  - Use `ngClick` on the thumbnails to register a handler that changes the main image.
+  - Add an end-to-end test for this feature.
+
+### step-13 _REST and Custom Services_
+
+- Replace `$http` with `$resource`.
+- Create a custom `Phone` service that represents the RESTful client.
+- Use a custom Jasmine equality tester in unit tests to ignore irrelevant properties.
+
+### step-14 _Animations_
+
+- Add animations to the application:
+  - Animate changes to the phone list, adding, removing and reordering phones with `ngRepeat`.
+  - Animate view transitions with `ngView`.
+  - Animate changes to the main phone image in the phone detail view.
+- Showcase three different kinds of animations:
+  - CSS transition animations.
+  - CSS keyframe animations.
+  - JavaScript-based animations.
+
+
+## Development with `angular-phonecat`
+
+The following docs describe how you can test and develop this application further.
+
+### Installing Dependencies
+
+The application relies upon various JS libraries, such as AngularJS and jQuery, and Node.js tools,
+such as [Karma][karma] and [Protractor][protractor]. You can install these by running:
 
 ```
 npm install
 ```
 
-Behind the scenes this will also call `npm run copy-libs`, which copies the AngularJS files and
-other front end dependencies. After that, you should find out that you have two new directories in
-your project.
+This will also download the AngularJS files needed for the current step of the tutorial and copy
+them to `app/lib`.
 
-* `node_modules` - contains the npm packages for the tools we need
-* `app/lib` - contains the AngularJS framework files and other front end dependencies
+Most of the scripts described below will run this automatically but it doesn't do any harm to run
+it whenever you like.
 
 *Note copying the AngularJS files from `node_modules` to `app/lib` makes it easier to serve the
 files by a web server.*
 
-### Run the Application
+### Running the Application during Development
 
-We have preconfigured the project with a simple development web server. The simplest way to start
-this server is:
+- Run `npm start`.
+- Navigate your browser to [http://localhost:8000/](http://localhost:8000/) to see the application
+  running.
 
-```
-npm start
-```
+### Unit Testing
 
-Now browse to the app at [`localhost:8000/index.html`][local-app-url].
+We recommend using [Jasmine][jasmine] and [Karma][karma] for your unit tests/specs, but you are free
+to use whatever works for you.
 
+- Start Karma with `npm test`.
+- A browser will start and connect to the Karma server. Chrome and Firefox are the default browsers,
+  others can be captured by loading the same URL or by changing the `karma.conf.js` file.
+- Karma will sit and watch your application and test JavaScript files. To run or re-run tests just
+  change any of your these files.
 
-## Directory Layout
+### End-to-End Testing
 
-```
-app/                  --> all of the source files for the application
-  app.css               --> default stylesheet
-  core/                 --> all app specific modules
-    version/              --> version related components
-      version.js                 --> version module declaration and basic "version" value service
-      version_test.js            --> "version" value service tests
-      version-directive.js       --> custom directive that returns the current app version
-      version-directive_test.js  --> version directive tests
-      interpolate-filter.js      --> custom interpolation filter
-      interpolate-filter_test.js --> interpolate filter tests
-  view1/                --> the view1 view template and logic
-    view1.html            --> the partial template
-    view1.js              --> the controller logic
-    view1_test.js         --> tests of the controller
-  view2/                --> the view2 view template and logic
-    view2.html            --> the partial template
-    view2.js              --> the controller logic
-    view2_test.js         --> tests of the controller
-  app.js                --> main application module
-  index.html            --> app layout file (the main html template file of the app)
-  index-async.html      --> just like index.html, but loads js files asynchronously
-e2e-tests/            --> end-to-end tests
-  protractor-conf.js    --> Protractor config file
-  scenarios.js          --> end-to-end scenarios to be run by Protractor
-karma.conf.js         --> config file for running unit tests with Karma
-package.json          --> Node.js specific metadata, including development tools dependencies
-package-lock.json     --> Npm specific metadata, including versions of installed development tools dependencies
-```
+We recommend using [Protractor][protractor] for end-to-end (e2e) testing.
 
+It requires a webserver that serves the application. See the
+_Running the Application during Development_ section, above.
 
-## Testing
-
-There are two kinds of tests in the `angular-seed` application: Unit tests and end-to-end tests.
-
-### Running Unit Tests
-
-The `angular-seed` app comes preconfigured with unit tests. These are written in [Jasmine][jasmine],
-which we run with the [Karma][karma] test runner. We provide a Karma configuration file to run them.
-
-* The configuration is found at `karma.conf.js`.
-* The unit tests are found next to the code they are testing and have a `.spec.js` suffix (e.g.
-  `view1.spec.js`).
-
-The easiest way to run the unit tests is to use the supplied npm script:
-
-```
-npm test
-```
-
-This script will start the Karma test runner to execute the unit tests. Moreover, Karma will start
-watching the source and test files for changes and then re-run the tests whenever any of them
-changes.
-This is the recommended strategy; if your unit tests are being run every time you save a file then
-you receive instant feedback on any changes that break the expected code functionality.
-
-You can also ask Karma to do a single run of the tests and then exit. This is useful if you want to
-check that a particular version of the code is operating as expected. The project contains a
-predefined script to do this:
-
-```
-npm run test-single-run
-```
-
-
-<a name="e2e-testing"></a>
-### Running End-to-End Tests
-
-The `angular-seed` app comes with end-to-end tests, again written in [Jasmine][jasmine]. These tests
-are run with the [Protractor][protractor] End-to-End test runner. It uses native events and has
-special features for AngularJS applications.
-
-* The configuration is found at `e2e-tests/protractor-conf.js`.
-* The end-to-end tests are found in `e2e-tests/scenarios.js`.
-
-Protractor simulates interaction with our web app and verifies that the application responds
-correctly. Therefore, our web server needs to be serving up the application, so that Protractor can
-interact with it.
-
-**Before starting Protractor, open a separate terminal window and run:**
-
-```
-npm start
-```
-
-In addition, since Protractor is built upon WebDriver, we need to ensure that it is installed and
-up-to-date. The `angular-seed` project is configured to do this automatically before running the
-end-to-end tests, so you don't need to worry about it. If you want to manually update the WebDriver,
-you can run:
-
-```
-npm run update-webdriver
-```
-
-Once you have ensured that the development web server hosting our application is up and running, you
-can run the end-to-end tests using the supplied npm script:
-
-```
-npm run protractor
-```
-
-This script will execute the end-to-end tests against the application being hosted on the
-development server.
+- Serve the application with: `npm start`
+- In a separate terminal/command line window run the e2e tests: `npm run protractor`.
+- Protractor will execute the e2e test scripts against the web application itself. The project is
+  set up to run the tests on Chrome directly. If you want to run against other browsers, you must
+  modify the configuration at `e2e-tests/protractor-conf.js`.
 
 **Note:**
 Under the hood, Protractor uses the [Selenium Standalone Server][selenium], which in turn requires
@@ -190,108 +227,54 @@ the [Java Development Kit (JDK)][jdk] to be installed on your local machine. Che
 If JDK is not already installed, you can download it [here][jdk-download].
 
 
-## Updating AngularJS and other dependencies
-
-Since the AngularJS framework library code and tools are acquired through package managers (e.g.
-npm) you can use these tools to easily update the dependencies. Simply run the preconfigured script:
+## Application Directory Layout
 
 ```
-npm run update-deps
+app/                     --> all the source code of the app (along with unit tests)
+  lib/...                --> 3rd party JS/CSS libraries, including AngularJS and jQuery (copied over from `node_modules/`)
+  core/                  --> all the source code of the core module (stuff used throughout the app)
+    checkmark/...        --> files for the `checkmark` filter, including JS source code, specs
+    phone/...            --> files for the `core.phone` submodule, including JS source code, specs
+    core.module.js       --> the core module
+  img/...                --> image files
+  phone-detail/...       --> files for the `phoneDetail` module, including JS source code, HTML templates, specs
+  phone-list/...         --> files for the `phoneList` module, including JS source code, HTML templates, specs
+  phones/...             --> static JSON files with phone data (used to fake a backend API)
+  app.animations.css     --> hooks for running CSS animations with `ngAnimate`
+  app.animations.js      --> hooks for running JS animations with `ngAnimate`
+  app.config.js          --> app-wide configuration of AngularJS services
+  app.css                --> default stylesheet
+  app.module.js          --> the main app module
+  index.html             --> app layout file (the main HTML template file of the app)
+
+e2e-tests/               --> config and source files for e2e tests
+  protractor.conf.js     --> config file for running e2e tests with Protractor
+  scenarios.js           --> e2e specs
+
+node_modules/...         --> 3rd party libraries and development tools (fetched using `npm`)
+
+scripts/                 --> handy scripts
+  private/...            --> private scripts used by the AngularJS Team to maintain this repo
+  update-repo.sh         --> script for pulling down the latest version of this repo (!!! DELETES ALL CHANGES YOU HAVE MADE !!!)
+
+karma.conf.js            --> config file for running unit tests with Karma
+package.json             --> Node.js specific metadata, including development tools dependencies
+package-lock.json        --> Npm specific metadata, including versions of installed development tools dependencies
 ```
-
-This will call `npm update` and `npm run copy-libs`, which in turn will find and install the latest
-versions that match the version ranges specified in the `package.json` file.
-
-If you want to update a dependency to a version newer than what the specificed range would permit,
-you can change the version range in `package.json` and then run `npm run update-deps` as usual.
-
-
-## Loading AngularJS Asynchronously
-
-The `angular-seed` project supports loading the framework and application scripts asynchronously.
-The special `index-async.html` is designed to support this style of loading. For it to work you must
-inject a piece of AngularJS JavaScript into the HTML page. The project has a predefined script to help
-do this:
-
-```
-npm run update-index-async
-```
-
-This will copy the contents of the `angular-loader.js` library file into the `index-async.html`
-page. You can run this every time you update the version of AngularJS that you are using.
-
-
-## Serving the Application Files
-
-While AngularJS is client-side-only technology and it is possible to create AngularJS web apps that
-do not require a backend server at all, we recommend serving the project files using a local
-web server during development to avoid issues with security restrictions (sandbox) in browsers. The
-sandbox implementation varies between browsers, but quite often prevents things like cookies, XHR,
-etc to function properly when an HTML page is opened via the `file://` scheme instead of `http://`.
-
-### Running the App during Development
-
-The `angular-seed` project comes preconfigured with a local development web server. It is a Node.js
-tool called [http-server][http-server]. You can start this web server with `npm start`, but you may
-choose to install the tool globally:
-
-```
-sudo npm install -g http-server
-```
-
-Then you can start your own development web server to serve static files from any folder by running:
-
-```
-http-server -a localhost -p 8000
-```
-
-Alternatively, you can choose to configure your own web server, such as Apache or Nginx. Just
-configure your server to serve the files under the `app/` directory.
-
-### Running the App in Production
-
-This really depends on how complex your app is and the overall infrastructure of your system, but
-the general rule is that all you need in production are the files under the `app/` directory.
-Everything else should be omitted.
-
-AngularJS apps are really just a bunch of static HTML, CSS and JavaScript files that need to be
-hosted somewhere they can be accessed by browsers.
-
-If your AngularJS app is talking to the backend server via XHR or other means, you need to figure
-out what is the best way to host the static files to comply with the same origin policy if
-applicable. Usually this is done by hosting the files by the backend server or through
-reverse-proxying the backend server(s) and web server(s).
-
-
-## Continuous Integration
-
-### Travis CI
-
-[Travis CI][travis] is a continuous integration service, which can monitor GitHub for new commits to
-your repository and execute scripts such as building the app or running tests. The `angular-seed`
-project contains a Travis configuration file, `.travis.yml`, which will cause Travis to run your
-tests when you push to GitHub.
-
-You will need to enable the integration between Travis and GitHub. See the
-[Travis website][travis-docs] for instructions on how to do this.
-
 
 ## Contact
 
-For more information on AngularJS please check out [angularjs.org][angularjs].
+For more information on AngularJS, please check out https://angularjs.org/.
 
 
-[angularjs]: https://angularjs.org/
-[git]: https://git-scm.com/
-[http-server]: https://github.com/indexzero/http-server
+[angular-seed]: https://github.com/angular/angular-seed
+[git-home]: https://git-scm.com/
+[git-setup]: https://help.github.com/articles/set-up-git
+[google-phone-gallery]: http://web.archive.org/web/20131215082038/http://www.android.com/devices
 [jasmine]: https://jasmine.github.io/
 [jdk]: https://wikipedia.org/wiki/Java_Development_Kit
 [jdk-download]: http://www.oracle.com/technetwork/java/javase/downloads
 [karma]: https://karma-runner.github.io/
-[local-app-url]: http://localhost:8000/index.html
 [node]: https://nodejs.org/
-[npm]: https://www.npmjs.org/
 [protractor]: http://www.protractortest.org/
 [selenium]: http://docs.seleniumhq.org/
-[travis]: https://travis-ci.org/
-[travis-docs]: https://docs.travis-ci.com/user/getting-started
