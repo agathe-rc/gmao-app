@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en" ng-app="phonecatApp">
+<html lang="en" ng-app="interventionsApp">
   <head>
     <meta charset="utf-8">
-    <title>Google Phone Gallery</title>
+    <title>GMAO App</title>
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="app.animations.css" />
@@ -12,7 +12,8 @@
     <script src="lib/angular-animate/angular-animate.js"></script>
     <script src="lib/angular-resource/angular-resource.js"></script>
     <script src="lib/angular-route/angular-route.js"></script>
-    <script src="app.module.js"></script>
+    <script src="interventions-list/interventions-list-module.js"></script>
+    <!--<script src="app.module.js"></script>
     <script src="app.config.js"></script>
     <script src="app.animations.js"></script>
     <script src="core/core.module.js"></script>
@@ -22,13 +23,24 @@
     <script src="phone-list/phone-list.module.js"></script>
     <script src="phone-list/phone-list.component.js"></script>
     <script src="phone-detail/phone-detail.module.js"></script>
-    <script src="phone-detail/phone-detail.component.js"></script>
+    <script src="phone-detail/phone-detail.component.js"></script>-->
   </head>
   <body>
-
-    <div class="view-container">
-      <div ng-view class="view-frame"></div>
+    <div ng-controller="interventionsCtrl">
+      <p>{{ interventions }}</p>
     </div>
-
   </body>
+  <script>
+    var app = angular.module('interventionsApp', []);
+    app.controller('interventionsCtrl', function($scope, $http, $cookies) {
+      // Set headers config - content-type and csrf token
+      $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+      $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+
+      $http.get('http://localhost:7000/api/interventions/')
+      .then(function(response) {
+        console.log(response)
+      });
+    });
+    </script>
 </html>
