@@ -12,6 +12,7 @@ router.register(
     base_name='interventions'
 )
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(router.urls, namespace='api'))

@@ -27,7 +27,7 @@ class InterventionViewSet(viewsets.ModelViewSet):
         return Response(self.serializer_class(queryset).data)
 
     # Create intervention
-    def post(self, request, *args):
+    def post(self, request):
         serializer = InterventionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -35,7 +35,13 @@ class InterventionViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Update intervention
-    # def put(self, request, *args):
+    def put(self, request, pk):
+        intervention = self.get_intervention(pk)
+        serializer = InterventionSerializer(instance=intervention, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Delete intervention
     def delete(self, request, pk):

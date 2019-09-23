@@ -19,7 +19,7 @@
     <div class="container">
       <nav class="navbar navbar-default">
         <div class="container-fluid">
-          <div class="navbar-header" ng-controller="headerController">
+          <div class="navbar-header">
             <div class="btn-group">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Ordre <span class="caret"></span>
@@ -29,21 +29,22 @@
                 <li><a href="#" ng-click="sortBy(false)">Le plus ancien</a></li>
               </ul>
             </div>
-            <button type="button" class="btn btn-primary navbar-btn" ng-click="new()">Nouvelle intervention</button>
+            <button type="button" class="btn btn-primary navbar-btn" ng-click="displayModal(undefined)">Nouvelle intervention</button>
           </div>
         </div>
       </nav>
 
       <!-- Interventions list -->
       <div class="container-fluid">
-        <div class="content-box row" ng-repeat="intervention in data" id="{{ intervention.id }}">
-          <div class='col-lg-5'>
+        <div class="content-box row" ng-repeat="intervention in interventionsList" id="{{ intervention.id }}">
+          <div class='col-lg-12'>
             <p>Titre : {{ intervention.label }}</p>
             <p>{{ intervention.description }}</p>
             <p>Intervenant : {{ intervention.technician }}</p>
+            <p>Lieu : {{ intervention.location }}</p>
             <p>Date : {{ intervention.date | date : "dd.MM.y" }}</p>
             <div class="btn-box pull-right">
-              <button class="btn btn-default" ng-click="modify(intervention.id)">Modifier</button>
+              <button class="btn btn-default" ng-click="displayModal(intervention.id)">Modifier</button>
               <button class="btn btn-danger" ng-click="delete(intervention.id)">Supprimer</button>
             </div>
           </div>
@@ -52,11 +53,11 @@
     </div>
 
     <!-- Modal form -->
-    <div class="modal" tabindex="-1" role="dialog" ng-controller="modalFormController">
+    <div class="modal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Créer une nouvelle intervention
+            <h5 class="modal-title">{{ currentIntervention.label ? 'Modifier une intervention' : 'Créer une intervention'}}
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -66,29 +67,28 @@
             <form>
               <div class="form-group">
                 <label for="label">Titre</label>
-                <input type="text" class="form-control" ng-model="intervention.label" required>
+                <input type="text" class="form-control" ng-model="currentIntervention.label" required>
               </div>
               <div class="form-group">
                 <label for="description">Description</label>
-                <textarea rows="5" class="form-control" ng-model="intervention.description" required></textarea>
+                <textarea rows="5" class="form-control" ng-model="currentIntervention.description" required></textarea>
               </div>
               <div class="form-group">
                 <label for="technician">Technicien</label>
-                <input type="text" class="form-control" ng-model="intervention.technician">
+                <input type="text" class="form-control" ng-model="currentIntervention.technician">
               </div>
               <div class="form-group">
                 <label for="label">Lieu</label>
-                <input type="text" class="form-control" ng-model="intervention.location" required>
+                <input type="text" class="form-control" ng-model="currentIntervention.location" required>
               </div>
               <div class="form-group">
                 <label for="date">Date</label>
-                <input type="date" class="form-control" ng-model="intervention.date">
+                <input type="date" class="form-control" ng-model="currentIntervention.date">
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-show="intervention.id" ng-click="create(intervention.id)">Enregistrer</button>
-            <button class="btn btn-primary" type="button" ng-show="!intervention.id" ng-click="create()">Créer</button>
+            <button class="btn btn-primary" type="button" ng-click="createOrEdit()">{{ currentIntervention.label ? 'Modifier' : 'Créer' }}</button>
             <button class="btn btn-warning" type="button" ng-click="cancel()">Annuler</button>
           </div>
         </div>
