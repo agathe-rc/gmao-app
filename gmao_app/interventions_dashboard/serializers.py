@@ -5,4 +5,4 @@ from rest_framework import serializers
 class InterventionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Intervention
-        fields = ['label', 'description', 'technician', 'location', 'date', 'status']
+        fields = ['id', 'label', 'description', 'technician', 'location', 'date', 'status']

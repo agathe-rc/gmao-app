@@ -8,11 +8,11 @@ class Intervention(models.Model):
     STATUS = [
         ('d', 'Draft'),
         ('v', 'Validated'),
-        ('c', 'Completed')
+        ('c', 'Closed')
     ]
     label = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True)
-    technician = models.CharField(max_length=200)
+    description = models.TextField(null=True)
+    technician = models.CharField(max_length=200, blank=True)
     location = models.CharField(max_length=200)
     date = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=50, choices=STATUS, default='d')

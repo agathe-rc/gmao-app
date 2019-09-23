@@ -3,44 +3,96 @@
   <head>
     <meta charset="utf-8">
     <title>GMAO App</title>
-    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="app.animations.css" />
-
-    <script src="lib/jquery/dist/jquery.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="lib/angular/angular.js"></script>
-    <script src="lib/angular-animate/angular-animate.js"></script>
-    <script src="lib/angular-resource/angular-resource.js"></script>
-    <script src="lib/angular-route/angular-route.js"></script>
     <script src="interventions-list/interventions-list-module.js"></script>
-    <!--<script src="app.module.js"></script>
-    <script src="app.config.js"></script>
-    <script src="app.animations.js"></script>
-    <script src="core/core.module.js"></script>
-    <script src="core/checkmark/checkmark.filter.js"></script>
-    <script src="core/phone/phone.module.js"></script>
-    <script src="core/phone/phone.service.js"></script>
-    <script src="phone-list/phone-list.module.js"></script>
-    <script src="phone-list/phone-list.component.js"></script>
-    <script src="phone-detail/phone-detail.module.js"></script>
-    <script src="phone-detail/phone-detail.component.js"></script>-->
   </head>
-  <body>
-    <div ng-controller="interventionsCtrl">
-      <p>{{ interventions }}</p>
+  
+  <body ng-controller="interventionsController">
+    <div class="container">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header" ng-controller="headerController">
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Ordre <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="#" ng-click="sortBy(true)">Le plus récent</a></li>
+                <li><a href="#" ng-click="sortBy(false)">Le plus ancien</a></li>
+              </ul>
+            </div>
+            <button type="button" class="btn btn-primary navbar-btn" ng-click="new()">Nouvelle intervention</button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Interventions list -->
+      <div class="container-fluid">
+        <div class="content-box row" ng-repeat="intervention in data" id="{{ intervention.id }}">
+          <div class='col-lg-5'>
+            <p>Titre : {{ intervention.label }}</p>
+            <p>{{ intervention.description }}</p>
+            <p>Intervenant : {{ intervention.technician }}</p>
+            <p>Date : {{ intervention.date | date : "dd.MM.y" }}</p>
+            <div class="btn-box pull-right">
+              <button class="btn btn-default" ng-click="modify(intervention.id)">Modifier</button>
+              <button class="btn btn-danger" ng-click="delete(intervention.id)">Supprimer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal form -->
+    <div class="modal" tabindex="-1" role="dialog" ng-controller="modalFormController">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Créer une nouvelle intervention
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </h5>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="label">Titre</label>
+                <input type="text" class="form-control" ng-model="intervention.label" required>
+              </div>
+              <div class="form-group">
+                <label for="description">Description</label>
+                <textarea rows="5" class="form-control" ng-model="intervention.description" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="technician">Technicien</label>
+                <input type="text" class="form-control" ng-model="intervention.technician">
+              </div>
+              <div class="form-group">
+                <label for="label">Lieu</label>
+                <input type="text" class="form-control" ng-model="intervention.location" required>
+              </div>
+              <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" class="form-control" ng-model="intervention.date">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-show="intervention.id" ng-click="create(intervention.id)">Enregistrer</button>
+            <button class="btn btn-primary" type="button" ng-show="!intervention.id" ng-click="create()">Créer</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Annuler</button>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
-  <script>
-    var app = angular.module('interventionsApp', []);
-    app.controller('interventionsCtrl', function($scope, $http, $cookies) {
-      // Set headers config - content-type and csrf token
-      $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-      $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
-
-      $http.get('http://localhost:7000/api/interventions/')
-      .then(function(response) {
-        console.log(response)
-      });
-    });
-    </script>
 </html>

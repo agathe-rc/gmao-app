@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework import status
 
 from .serializers import InterventionSerializer
 from .models import Intervention
-
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
 
 
 class InterventionViewSet(viewsets.ModelViewSet):
@@ -19,5 +16,29 @@ class InterventionViewSet(viewsets.ModelViewSet):
     queryset = Intervention.objects.all()
     serializer_class = InterventionSerializer
 
-    def get(self, request, *args):
+    def get_intervention(self, pk):
+        try:
+            return Intervention.objects.get(pk=pk)
+        except Intervention.DoesNotExist:
+            raise Http404
+
+    # Retrieve list of interventions
+    def get(self, request):
         return Response(self.serializer_class(queryset).data)
+
+    # Create intervention
+    def post(self, request, *args):
+        serializer = InterventionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Update intervention
+    # def put(self, request, *args):
+
+    # Delete intervention
+    def delete(self, request, pk):
+        intervention = self.get_intervention(pk)
+        intervention.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

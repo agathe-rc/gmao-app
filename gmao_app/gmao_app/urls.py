@@ -14,7 +14,6 @@ router.register(
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/', include(router.urls, namespace='api')),
-    url(r'^$', views.index, name='index')
+    url(r'^api/', include(router.urls, namespace='api'))
 ]
 
