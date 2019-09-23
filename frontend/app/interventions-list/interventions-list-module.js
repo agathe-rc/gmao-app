@@ -20,7 +20,6 @@ app.controller('interventionsController', function($scope, $filter, $http){
     $http.post('http://127.0.0.1:7000/api/interventions/', $scope.currentIntervention)
     .then(function(response){
       console.log('Created')
-      $('.modal').modal('close');
       window.location.reload();
     });
   };
@@ -30,7 +29,6 @@ app.controller('interventionsController', function($scope, $filter, $http){
     $http.put(`http://127.0.0.1:7000/api/interventions/${pk}/`, $scope.currentIntervention)
     .then(function(response){
       console.log('Updated');
-      $('.modal').modal('close');
       window.location.reload();
     });
   };
@@ -50,7 +48,6 @@ app.controller('interventionsController', function($scope, $filter, $http){
       $http.delete(`http://127.0.0.1:7000/api/interventions/${pk}/`)
       .then(function(response){
         console.log('Deleted');
-        $('.modal').modal('close');
         window.location.reload();
       });
     }
@@ -58,10 +55,12 @@ app.controller('interventionsController', function($scope, $filter, $http){
 
   // Display modal with content if Edit - nothing if New
   $scope.displayModal = function(pk){
+    $scope.isNew = true;
     $scope.currentId = pk;
-    $scope.currentIntervention = {}
+    $scope.currentIntervention = {};
 
     if ($scope.currentId) {
+      $scope.isNew = false
       $scope.get($scope.currentId)
     }
 
@@ -69,19 +68,43 @@ app.controller('interventionsController', function($scope, $filter, $http){
   };
 
   $scope.createOrEdit = function(){
-    if (!$scope.currentIntervention['status']) {
+    // If new intervention : status is Draft
+    if (!$scope.currentIntervention['status']){
       $scope.currentIntervention['status'] = 'd';
-    } else if ('all fields are filled') {
-      // status = validé
+    // If all fields are filled : status is Validated
+    } else if ($scope.isFormFilled()){
+      $scope.currentIntervention['status'] = 'v';
+    // If date is passed : status is Closed
+    } else if ($scope.isDatePassed()){
+      $scope.currentIntervention['status'] = 'c'
     }
+
     $scope.currentId ? $scope.modify($scope.currentId) : $scope.create()
+  };
+
+  $scope.isFormFilled = function(){
+    let isFilled = true;
+    $('input.form-control').each(function(){
+      if ($(this).val() == ''){
+        isFilled = false
+      }
+    });
+    return isFilled;
+  };
+
+  $scope.isDatePassed = function(){
+    console.log($scope.currentIntervention.date < new Date())
+    return $scope.currentIntervention.date < new Date()
+  };
+
+  $scope.getStatus = function(letter){
+    switch (letter){
+      case 'd':
+        return 'Brouillon'
+      case 'v':
+        return 'Validé'
+      case 'c':
+        return 'Terminé'
+    }
   }
-
 });
-
-  // ********* TODO:
-  // If all fields : status=Validé
-  // If date passed : status=Terminé
-  // If fields required not filled = bouton disabled
-  // PB bootstrap ?
-  // favicon

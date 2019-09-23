@@ -3,48 +3,41 @@
   <head>
     <meta charset="utf-8">
     <title>GMAO App</title>
+    <link rel="icon" type="image/png" href="img/favicon.png" />
     <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="lib/angular/angular.js"></script>
     <script src="interventions-list/interventions-list-module.js"></script>
   </head>
   
   <body ng-controller="interventionsController">
-    <div class="container">
-      <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <div class="btn-group">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Ordre <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a href="#" ng-click="sortBy(true)">Le plus récent</a></li>
-                <li><a href="#" ng-click="sortBy(false)">Le plus ancien</a></li>
-              </ul>
-            </div>
-            <button type="button" class="btn btn-primary navbar-btn" ng-click="displayModal(undefined)">Nouvelle intervention</button>
+    <div class="container w-75">
+      <nav class="navbar navbar-light bg-light mb-3">
+        <button type="button" class="btn btn-nautilux navbar-btn" ng-click="displayModal(undefined)">Nouvelle intervention</button>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Ordre
+          </button>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item" ng-click="sortBy(true)">Le plus récent</a>
+            <a href="#" class="dropdown-item" ng-click="sortBy(false)">Le plus ancien</a>
           </div>
         </div>
       </nav>
 
       <!-- Interventions list -->
-      <div class="container-fluid">
+      <div class="container">
         <div class="content-box row" ng-repeat="intervention in interventionsList" id="{{ intervention.id }}">
           <div class='col-lg-12'>
-            <p>Titre : {{ intervention.label }}</p>
+            <p>{{ intervention.label }}</p>
             <p>{{ intervention.description }}</p>
-            <p>Intervenant : {{ intervention.technician }}</p>
-            <p>Lieu : {{ intervention.location }}</p>
+            <p class="m-0">Intervenant : {{ intervention.technician }}</p>
+            <p class="m-0">Lieu : {{ intervention.location }}</p>
             <p>Date : {{ intervention.date | date : "dd.MM.y" }}</p>
-            <div class="btn-box pull-right">
-              <button class="btn btn-default" ng-click="displayModal(intervention.id)">Modifier</button>
+            <p class="m-0">Statut : {{ getStatus(intervention.status) }}</p>
+            <div class="btn-box float-right">
+              <button class="btn btn-light" ng-click="displayModal(intervention.id)" ng-disabled="intervention.status === 'c'">Modifier</button>
               <button class="btn btn-danger" ng-click="delete(intervention.id)">Supprimer</button>
             </div>
           </div>
@@ -54,14 +47,13 @@
 
     <!-- Modal form -->
     <div class="modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{{ currentIntervention.label ? 'Modifier une intervention' : 'Créer une intervention'}}
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </h5>
+            <h5 class="modal-title">{{ isNew ? 'Créer une intervention' : 'Modifier une intervention'}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
           <div class="modal-body">
             <form>
@@ -88,11 +80,15 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="createOrEdit()">{{ currentIntervention.label ? 'Modifier' : 'Créer' }}</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Annuler</button>
+            <button class="btn btn-nautilux" type="button" ng-click="createOrEdit()">{{ isNew ? 'Créer' : 'Modifier' }}</button>
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
           </div>
         </div>
       </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   </body>
 </html>
