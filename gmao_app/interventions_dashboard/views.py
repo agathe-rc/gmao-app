@@ -11,11 +11,12 @@ from .models import Intervention
 
 class InterventionViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows interventions to be viewed or edited.
+    API endpoint that allows interventions to be viewed, edited or created.
     """
     queryset = Intervention.objects.all()
     serializer_class = InterventionSerializer
 
+    # Retrieve specific intervention object
     def get_intervention(self, pk):
         try:
             return Intervention.objects.get(pk=pk)

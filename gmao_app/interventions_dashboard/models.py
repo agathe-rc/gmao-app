@@ -10,6 +10,7 @@ class Intervention(models.Model):
         ('v', 'Validated'),
         ('c', 'Closed')
     ]
+    
     label = models.CharField(max_length=200)
     description = models.TextField(null=True)
     technician = models.CharField(max_length=200, blank=True)
