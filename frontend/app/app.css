@@ -1,11 +1,17 @@
 * {
   font-size: 0.9rem;
 }
+
+.navbar {
+  padding: 1rem 1rem !important;
+}
+
 .btn-nautilux {
   color: white !important;
   background-color: #75c5c3 !important;
   border-color: #75c5c3 !important;
 }
+
 .content-box {
   padding: 15px;
   margin-bottom: 15px;
