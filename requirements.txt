@@ -19,7 +19,7 @@ ipaddress==1.0.22
 jsonschema==2.6.0
 pycodestyle==2.4.0
 pytz==2019.2
-PyYAML==3.12
+PyYAML==5.4
 requests==2.18.4
 six==1.11.0
 texttable==0.9.1
