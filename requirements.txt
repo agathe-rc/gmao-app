@@ -24,7 +24,7 @@ requests==2.18.4
 six==1.11.0
 texttable==0.9.1
 unity-lens-photos==1.0
-urllib3==1.22
+urllib3==1.26.5
 virtualenv==16.6.0
 websocket-client==0.47.0
 wxPython==3.0.2.0
